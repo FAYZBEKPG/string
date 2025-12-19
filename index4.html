@@ -1,0 +1,417 @@
+<<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String Utility Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .main-input {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .main-input textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+        }
+
+        .main-input textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .tool-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #764ba2;
+            padding-bottom: 10px;
+        }
+
+        .tool-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .output {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            font-family: 'Courier New', monospace;
+            min-height: 50px;
+            word-wrap: break-word;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .stat-item strong {
+            color: #1976d2;
+            display: block;
+            font-size: 1.5em;
+        }
+
+        .stat-item span {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 String Utility Tool</h1>
+
+        <div class="main-input">
+            <textarea id="mainInput" placeholder="Bu yerga matn kiriting...">JavaScript dasturlash tili</textarea>
+        </div>
+
+        <div class="tools-grid">
+            <!-- 1. CASE CONVERTER -->
+            <div class="tool-card">
+                <h3>🔤 Case Converter</h3>
+                <div class="tool-buttons">
+                    <button onclick="kattaHarf()">KATTA HARF</button>
+                    <button onclick="kichikHarf()">kichik harf</button>
+                    <button onclick="titleCase()">Title Case</button>
+                    <button onclick="toggleCase()">tOGGLE cASE</button>
+                </div>
+                <div id="caseOutput" class="output"></div>
+            </div>
+
+            <!-- 2. STRING INFO -->
+            <div class="tool-card">
+                <h3>📊 String Ma'lumotlari</h3>
+                <button onclick="stringInfo()" style="width: 100%;">Ma'lumotni Ko'rsatish</button>
+                <div class="stats" id="statsOutput"></div>
+            </div>
+
+            <!-- 3. SEARCH & REPLACE -->
+            <div class="tool-card">
+                <h3>🔍 Qidirish va Almashtirish</h3>
+                <div class="input-group">
+                    <input type="text" id="searchText" placeholder="Qidirilayotgan so'z">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="replaceText" placeholder="Almashtirish so'zi">
+                </div>
+                <button onclick="qidirish()" style="width: 100%; margin-bottom: 5px;">Qidirish</button>
+                <button onclick="almashtirish()" style="width: 100%;">Almashtirish</button>
+                <div id="searchOutput" class="output"></div>
+            </div>
+
+            <!-- 4. STRING MODIFIERS -->
+            <div class="tool-card">
+                <h3>✂️ String O'zgartirish</h3>
+                <div class="tool-buttons">
+                    <button onclick="trim()">Trim</button>
+                    <button onclick="teskari()">Teskari</button>
+                    <button onclick="removeSpaces()">Bo'sh Joy O'chirish</button>
+                    <button onclick="sortWords()">So'zlarni Saralash</button>
+                </div>
+                <div id="modifierOutput" class="output"></div>
+            </div>
+
+            <!-- 5. TEXT ANALYSIS -->
+            <div class="tool-card">
+                <h3>🔬 Matn Tahlili</h3>
+                <div class="tool-buttons">
+                    <button onclick="sozSoni()">So'zlar Soni</button>
+                    <button onclick="harfSoni()">Harflar Soni</button>
+                    <button onclick="uzunSoz()">Eng Uzun So'z</button>
+                    <button onclick="qisqaSoz()">Eng Qisqa So'z</button>
+                </div>
+                <div id="analysisOutput" class="output"></div>
+            </div>
+
+            <!-- 6. VALIDATORS -->
+            <div class="tool-card">
+                <h3>✅ Validator</h3>
+                <div class="tool-buttons">
+                    <button onclick="emailTekshir()">Email</button>
+                    <button onclick="urlTekshir()">URL</button>
+                    <button onclick="palindromTekshir()">Palindrom</button>
+                    <button onclick="harfRaqamTekshir()">Faqat Harflar</button>
+                </div>
+                <div id="validatorOutput" class="output"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getInput() {
+            return document.getElementById('mainInput').value;
+        }
+
+        // CASE CONVERTER
+        function kattaHarf() {
+            document.getElementById('caseOutput').textContent = getInput().toUpperCase();
+        }
+
+        function kichikHarf() {
+            document.getElementById('caseOutput').textContent = getInput().toLowerCase();
+        }
+
+        function titleCase() {
+            let matn = getInput();
+            let result = matn.toLowerCase().split(' ').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+            document.getElementById('caseOutput').textContent = result;
+        }
+
+        function toggleCase() {
+            let matn = getInput();
+            let result = matn.split('').map(char =>
+                char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase()
+            ).join('');
+            document.getElementById('caseOutput').textContent = result;
+        }
+
+        // STRING INFO
+        function stringInfo() {
+            let matn = getInput();
+            let stats = {
+                belgilar: matn.length,
+                boshjoysiz: matn.replace(/\s/g, '').length,
+                sozlar: matn.trim().split(/\s+/).filter(s => s).length,
+                qatorlar: matn.split('\n').length,
+                kattaHarf: (matn.match(/[A-ZА-ЯЎҒҚҲ]/g) || []).length,
+                kichikHarf: (matn.match(/[a-zа-яўғқҳ]/g) || []).length,
+                raqamlar: (matn.match(/\d/g) || []).length,
+                boshJoy: (matn.match(/\s/g) || []).length
+            };
+
+            document.getElementById('statsOutput').innerHTML = `
+                <div class="stat-item"><strong>${stats.belgilar}</strong><span>Belgilar</span></div>
+                <div class="stat-item"><strong>${stats.sozlar}</strong><span>So'zlar</span></div>
+                <div class="stat-item"><strong>${stats.qatorlar}</strong><span>Qatorlar</span></div>
+                <div class="stat-item"><strong>${stats.boshjoysiz}</strong><span>Bo'sh joysiz</span></div>
+                <div class="stat-item"><strong>${stats.kattaHarf}</strong><span>Katta harflar</span></div>
+                <div class="stat-item"><strong>${stats.kichikHarf}</strong><span>Kichik harflar</span></div>
+                <div class="stat-item"><strong>${stats.raqamlar}</strong><span>Raqamlar</span></div>
+                <div class="stat-item"><strong>${stats.boshJoy}</strong><span>Bo'sh joylar</span></div>
+            `;
+        }
+
+        // SEARCH & REPLACE
+        function qidirish() {
+            let matn = getInput();
+            let qidiruv = document.getElementById('searchText').value;
+            if (!qidiruv) {
+                alert("Qidiruv so'zini kiriting!");
+                return;
+            }
+            let count = (matn.match(new RegExp(qidiruv, 'gi')) || []).length;
+            let index = matn.indexOf(qidiruv);
+            document.getElementById('searchOutput').innerHTML = `
+                Topildi: <strong>${count}</strong> marta<br>
+                Birinchi joyi: <strong>${index >= 0 ? index : 'Topilmadi'}</strong>
+            `;
+        }
+
+        function almashtirish() {
+            let matn = getInput();
+            let qidiruv = document.getElementById('searchText').value;
+            let almashtirish = document.getElementById('replaceText').value;
+            if (!qidiruv) {
+                alert("Qidiruv so'zini kiriting!");
+                return;
+            }
+            let result = matn.replaceAll(qidiruv, almashtirish);
+            document.getElementById('mainInput').value = result;
+            document.getElementById('searchOutput').innerHTML = `✅ Almashtirildi!`;
+        }
+
+        // STRING MODIFIERS
+        function trim() {
+            document.getElementById('modifierOutput').textContent = getInput().trim();
+        }
+
+        function teskari() {
+            document.getElementById('modifierOutput').textContent = getInput().split('').reverse().join('');
+        }
+
+        function removeSpaces() {
+            document.getElementById('modifierOutput').textContent = getInput().replace(/\s/g, '');
+        }
+
+        function sortWords() {
+            let matn = getInput();
+            let sorted = matn.split(' ').sort().join(' ');
+            document.getElementById('modifierOutput').textContent = sorted;
+        }
+
+        // TEXT ANALYSIS
+        function sozSoni() {
+            let sozlar = getInput().trim().split(/\s+/).filter(s => s);
+            document.getElementById('analysisOutput').innerHTML = `
+                So'zlar soni: <strong>${sozlar.length}</strong><br>
+                So'zlar: ${sozlar.join(', ')}
+            `;
+        }
+
+        function harfSoni() {
+            let matn = getInput();
+            let harflar = {};
+            for (let harf of matn.toLowerCase()) {
+                if (/[a-zа-яўғқҳ]/.test(harf)) {
+                    harflar[harf] = (harflar[harf] || 0) + 1;
+                }
+            }
+            let sorted = Object.entries(harflar).sort((a, b) => b[1] - a[1]);
+            let html = "Eng ko'p ishlatilingan harflar:<br>";
+            sorted.slice(0, 5).forEach(([harf, son]) => {
+                html += `<strong>${harf}</strong>: ${son} marta<br>`;
+            });
+            document.getElementById('analysisOutput').innerHTML = html;
+        }
+
+        function uzunSoz() {
+            let sozlar = getInput().split(/\s+/).filter(s => s);
+            let uzun = sozlar.reduce((a, b) => a.length > b.length ? a : b, '');
+            document.getElementById('analysisOutput').innerHTML = `
+                Eng uzun so'z: <strong>${uzun}</strong><br>
+                Uzunligi: ${uzun.length} ta harf
+            `;
+        }
+
+        function qisqaSoz() {
+            let sozlar = getInput().split(/\s+/).filter(s => s);
+            let qisqa = sozlar.reduce((a, b) => a.length < b.length ? a : b, sozlar[0] || '');
+            document.getElementById('analysisOutput').innerHTML = `
+                Eng qisqa so'z: <strong>${qisqa}</strong><br>
+                Uzunligi: ${qisqa.length} ta harf
+            `;
+        }
+
+        // VALIDATORS
+        function emailTekshir() {
+            let matn = getInput().trim();
+            let regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            let valid = regex.test(matn);
+            document.getElementById('validatorOutput').innerHTML =
+                valid ? '✅ To\'g\'ri email' : '❌ Noto\'g\'ri email';
+        }
+
+        function urlTekshir() {
+            let matn = getInput().trim();
+            let regex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+            let valid = regex.test(matn);
+            document.getElementById('validatorOutput').innerHTML =
+                valid ? '✅ To\'g\'ri URL' : '❌ Noto\'g\'ri URL';
+        }
+
+        function palindromTekshir() {
+            let matn = getInput().toLowerCase().replace(/[^a-z0-9а-яўғқҳ]/g, '');
+            let teskari = matn.split('').reverse().join('');
+            let palindrom = matn === teskari;
+            document.getElementById('validatorOutput').innerHTML =
+                palindrom ? '✅ Palindrom' : '❌ Palindrom emas';
+        }
+
+        function harfRaqamTekshir() {
+            let matn = getInput();
+            let faqatHarf = /^[a-zA-Zа-яА-ЯўҒғҚқҲҳ\s]+$/.test(matn);
+            document.getElementById('validatorOutput').innerHTML =
+                faqatHarf ? '✅ Faqat harflar' : '❌ Harfdan boshqa belgilar bor';
+        }
+
+        console.log("🔧 String Utility Tool ishga tushdi!");
+    </script>
+</body>
+</html>
